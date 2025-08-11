@@ -1,14 +1,14 @@
 {
-  "title": "RC Residential — Timisoara",
-  "cover": "/media/sample-rc.jpg",
+  "title": "SMUC Caransebes",
+  "cover": "/media/3_12-photo.jpg",
   "images": [
     {
-      "src": "/media/sample-rebar.jpg",
-      "caption": "Slab reinforcement"
+      "src": "/media/8k.jpg",
+      "caption": "Spital SMUC"
     },
     {
-      "src": "/media/sample-form.jpg",
-      "caption": "Formwork & pour"
+      "src": "/media/1_26-photo.jpg",
+      "caption": "Fatada"
     }
   ]
 }
