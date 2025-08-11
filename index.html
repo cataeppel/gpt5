@@ -1,13 +1,13 @@
 <!doctype html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>eppel construct — Structural design</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    :root { --bg:#fff; --text:#0f172a; --muted:#475569; --border:#e5e7eb; --card:#fff; --grad-start:#7c3aed; --grad-end:#d946ef; --toast-bg:#22c55e; }
-    [data-theme="dark"] { --bg:#0f172a; --text:#e5e7eb; --muted:#9aa4b2; --border:#243042; --card:#111827; --toast-bg:#16a34a; }
+    :root { --bg:#0f172a; --text:#e5e7eb; --muted:#9aa4b2; --border:#243042; --card:#111827; --grad-start:#7c3aed; --grad-end:#d946ef; --toast-bg:#16a34a; --accent:#60a5fa; }
+    [data-theme="light"] { --bg:#fff; --text:#0f172a; --muted:#475569; --border:#e5e7eb; --card:#fff; --toast-bg:#22c55e; --accent:#2563eb; }
     body{background:var(--bg);color:var(--text)}
     .card{border:1px solid var(--border);background:var(--card);border-radius:1rem}
     .grad{background-image:linear-gradient(90deg,var(--grad-start),var(--grad-end))}
@@ -32,12 +32,13 @@
     .lb-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.15); color: #fff; border: none; width: 44px; height: 44px; border-radius: 9999px; cursor: pointer; }
     .lb-prev { left: -56px; } .lb-next { right: -56px; }
     .lb-close { position: absolute; top: -52px; right: 0; background: rgba(255,255,255,.15); color: #fff; border: none; width: 40px; height: 40px; border-radius: 9999px; cursor: pointer; }
+    a.link { color: var(--accent); }
   </style>
 </head>
 <body>
   <div id="successToast" class="toast">✅ Your message has been sent successfully!</div>
 
-  <header class="sticky top-0 z-50 border-b bg-white/70 backdrop-blur">
+  <header class="sticky top-0 z-50 border-b bg-white/10 backdrop-blur">
     <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <div class="h-6 w-6 rounded-md grad"></div>
@@ -56,23 +57,23 @@
     <section id="home" class="space-y-3">
       <div class="chip grad inline-block text-white px-2 py-1 rounded-full text-xs">Structural Engineering · Romania</div>
       <h1 class="text-3xl md:text-5xl font-extrabold">Design for reinforced concrete & steel structures</h1>
-      <p class="text-slate-600 max-w-3xl">BIM‑ready deliverables and shop drawings crews can build from.</p>
+      <p class="text-slate-300 max-w-3xl">BIM‑ready deliverables and shop drawings crews can build from.</p>
     </section>
 
     <section id="projects" class="space-y-4">
       <h2 class="text-2xl md:text-3xl font-semibold">Recent work</h2>
       <div id="albumFilters" class="flex flex-wrap gap-2"></div>
       <div id="gallery"></div>
-      <p class="text-sm text-slate-600">Manage albums and images at <code>/admin</code> (Netlify Identity).</p>
+      <p class="text-sm text-slate-400">Manage albums and images at <a class="link" href="/admin">/admin</a> (Netlify Identity).</p>
     </section>
 
     <section id="contact" class="space-y-3">
       <h2 class="text-2xl md:text-3xl font-semibold">Contact</h2>
       <form class="card p-6 space-y-4 max-w-2xl" action="https://formspree.io/f/mgvzdeny" method="POST" onsubmit="submitSpree(event)">
         <div class="grid md:grid-cols-2 gap-4">
-          <input class="border rounded-xl px-3 py-2" name="name" placeholder="Full name" required>
-          <input class="border rounded-xl px-3 py-2" type="email" name="email" placeholder="Email address" required>
-          <textarea class="border rounded-xl px-3 py-2 md:col-span-2" rows="5" name="message" placeholder="Tell us about your project" required></textarea>
+          <input class="border rounded-xl px-3 py-2 bg-transparent" name="name" placeholder="Full name" required>
+          <input class="border rounded-xl px-3 py-2 bg-transparent" type="email" name="email" placeholder="Email address" required>
+          <textarea class="border rounded-xl px-3 py-2 md:col-span-2 bg-transparent" rows="5" name="message" placeholder="Tell us about your project" required></textarea>
         </div>
         <button class="btn btn-primary" type="submit">Send message</button>
       </form>
@@ -102,6 +103,20 @@
       <button class="lb-close" aria-label="Close" id="lbClose">✕</button>
     </div>
   </div>
+
+  <!-- Netlify Identity widget (makes invite/login work on the homepage) -->
+  <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+  <script>
+    if (window.netlifyIdentity) {
+      window.netlifyIdentity.on('init', (user) => {
+        if (!user) {
+          window.netlifyIdentity.on('login', () => {
+            document.location.href = '/admin/';
+          });
+        }
+      });
+    }
+  </script>
 
 <script>
 function applyTheme(t){
@@ -218,14 +233,8 @@ function closeLightbox(){
   lb.classList.remove('open');
   document.body.style.overflow = '';
 }
-function nextImg(){
-  CURRENT_INDEX = (CURRENT_INDEX + 1) % CURRENT_IMAGES.length;
-  openLightbox(CURRENT_INDEX);
-}
-function prevImg(){
-  CURRENT_INDEX = (CURRENT_INDEX - 1 + CURRENT_IMAGES.length) % CURRENT_IMAGES.length;
-  openLightbox(CURRENT_INDEX);
-}
+function nextImg(){ CURRENT_INDEX = (CURRENT_INDEX + 1) % CURRENT_IMAGES.length; openLightbox(CURRENT_INDEX); }
+function prevImg(){ CURRENT_INDEX = (CURRENT_INDEX - 1 + CURRENT_IMAGES.length) % CURRENT_IMAGES.length; openLightbox(CURRENT_INDEX); }
 lbNext.addEventListener('click', nextImg);
 lbPrev.addEventListener('click', prevImg);
 lbClose.addEventListener('click', closeLightbox);
