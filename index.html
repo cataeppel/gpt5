@@ -1,259 +1,257 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>eppel construct — Structural design in Romania</title>
-  <meta name="description" content="Design for reinforced concrete and steel structures. Drafting and BIM-ready deliverables. Romania.">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2216%22 fill=%22%23a855f7%22/><path d=%22M20 65L45 30l10 15 25-10-25 35-10-15-15 15z%22 fill=%22%23fff%22/></svg>">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>eppel construct — Structural design</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    .grad { background-image: linear-gradient(90deg, #7c3aed, #d946ef); }
-    .chip { @apply inline-flex items-center text-xs font-medium rounded-full px-2 py-1 text-white; }
-    .card { @apply rounded-2xl border bg-white shadow-sm; }
+    :root { --bg:#fff; --text:#0f172a; --muted:#475569; --border:#e5e7eb; --card:#fff; --grad-start:#7c3aed; --grad-end:#d946ef; --toast-bg:#22c55e; }
+    [data-theme="dark"] { --bg:#0f172a; --text:#e5e7eb; --muted:#9aa4b2; --border:#243042; --card:#111827; --toast-bg:#16a34a; }
+    body{background:var(--bg);color:var(--text)}
+    .card{border:1px solid var(--border);background:var(--card);border-radius:1rem}
+    .grad{background-image:linear-gradient(90deg,var(--grad-start),var(--grad-end))}
+    .btn{padding:.75rem 1rem;border-radius:1rem;display:inline-block}
+    .btn-primary{color:#fff;background-image:linear-gradient(90deg,var(--grad-start),var(--grad-end))}
+    .toast{visibility:hidden;min-width:260px;background:var(--toast-bg);color:#fff;border-radius:12px;padding:14px 18px;position:fixed;z-index:999;left:50%;bottom:-100px;transform:translateX(-50%);opacity:0;transition:opacity .45s,bottom .45s}
+    .toast.show{visibility:visible;opacity:1;bottom:42px}
+    .theme-toggle{position:fixed;left:16px;bottom:16px;z-index:60;display:flex;gap:.5rem;align-items:center}
+    .theme-btn{width:56px;height:56px;border-radius:9999px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center}
+    .album-btn{padding:.4rem .7rem;border:1px solid var(--border);border-radius:.75rem;cursor:pointer}
+    .album-btn.active{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.35)}
+    /* Masonry */
+    #gallery { column-gap: 1rem; }
+    @media (min-width: 640px){ #gallery { column-count: 2; } }
+    @media (min-width: 768px){ #gallery { column-count: 3; } }
+    .masonry-item { break-inside: avoid; margin: 0 0 1rem; display: inline-block; width: 100%; }
+    .masonry-item img { width: 100%; height: auto; display:block; }
+    /* Lightbox */
+    .lightbox { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; }
+    .lightbox.open { display: flex; }
+    .lightbox-content { position: relative; max-width: 92vw; max-height: 86vh; }
+    .lightbox img { max-width: 92vw; max-height: 70vh; border-radius: 12px; display:block; }
+    .lightbox .caption { color: #fff; text-align: center; margin-top: .75rem; opacity: .9; }
+    .lb-btn { position: absolute; top: 50%; transform: translateY(-50%); background: rgba(255,255,255,.15); color: #fff; border: none; width: 44px; height: 44px; border-radius: 9999px; cursor: pointer; }
+    .lb-prev { left: -56px; } .lb-next { right: -56px; }
+    .lb-close { position: absolute; top: -52px; right: 0; background: rgba(255,255,255,.15); color: #fff; border: none; width: 40px; height: 40px; border-radius: 9999px; cursor: pointer; }
   </style>
 </head>
-<body class="min-h-screen bg-white text-slate-900">
-  <!-- Navbar -->
+<body>
+  <div id="successToast" class="toast">✅ Your message has been sent successfully!</div>
+
   <header class="sticky top-0 z-50 border-b bg-white/70 backdrop-blur">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
       <div class="flex items-center gap-2">
         <div class="h-6 w-6 rounded-md grad"></div>
-        <span class="font-bold tracking-tight lowercase">eppel construct</span>
-        <span class="ml-2 text-xs px-2 py-1 rounded-full border">RO</span>
+        <span class="font-bold lowercase">eppel construct</span>
       </div>
-      <nav class="hidden md:flex items-center gap-2" id="nav-desktop"></nav>
-      <button class="md:hidden p-2" onclick="toggleMenu()" aria-label="Menu">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
-      </button>
+      <nav class="hidden md:flex gap-3">
+        <a href="#home" class="px-3 py-2 rounded-xl border">Home</a>
+        <a href="#projects" class="px-3 py-2 rounded-xl border">Recent work</a>
+        <a href="#contact" class="px-3 py-2 rounded-xl border">Contact</a>
+      </nav>
+      <a href="#contact" class="btn btn-primary hidden md:inline-block">Request a quote</a>
     </div>
-    <div id="nav-mobile" class="md:hidden hidden px-4 pb-4 grid grid-cols-2 gap-2"></div>
   </header>
 
-  <!-- Pages -->
-  <main id="app" class="space-y-10"></main>
+  <main id="app" class="max-w-6xl mx-auto px-4 py-8 space-y-12">
+    <section id="home" class="space-y-3">
+      <div class="chip grad inline-block text-white px-2 py-1 rounded-full text-xs">Structural Engineering · Romania</div>
+      <h1 class="text-3xl md:text-5xl font-extrabold">Design for reinforced concrete & steel structures</h1>
+      <p class="text-slate-600 max-w-3xl">BIM‑ready deliverables and shop drawings crews can build from.</p>
+    </section>
 
-  <footer class="mt-16 border-t">
-    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8 text-sm text-slate-600 flex flex-col md:flex-row items-center justify-between gap-4">
-      <span>© <span id="yr"></span> eppel construct</span>
-      <div class="flex items-center gap-4">
-        <a href="#" class="hover:underline">Privacy</a>
-        <a href="#" class="hover:underline">Terms</a>
-        <a href="#" class="hover:underline">Imprint</a>
-      </div>
+    <!-- GALLERY / RECENT WORK -->
+    <section id="projects" class="space-y-4">
+      <h2 class="text-2xl md:text-3xl font-semibold">Recent work</h2>
+      <div id="albumFilters" class="flex flex-wrap gap-2"></div>
+      <div id="gallery"></div>
+      <p class="text-sm text-slate-600">Manage albums and images at <code>/admin</code> (Netlify Identity).</p>
+    </section>
+
+    <section id="contact" class="space-y-3">
+      <h2 class="text-2xl md:text-3xl font-semibold">Contact</h2>
+      <form class="card p-6 space-y-4 max-w-2xl" action="https://formspree.io/f/mgvzdeny" method="POST" onsubmit="submitSpree(event)">
+        <div class="grid md:grid-cols-2 gap-4">
+          <input class="border rounded-xl px-3 py-2" name="name" placeholder="Full name" required>
+          <input class="border rounded-xl px-3 py-2" type="email" name="email" placeholder="Email address" required>
+          <textarea class="border rounded-xl px-3 py-2 md:col-span-2" rows="5" name="message" placeholder="Tell us about your project" required></textarea>
+        </div>
+        <button class="btn btn-primary" type="submit">Send message</button>
+      </form>
+    </section>
+  </main>
+
+  <!-- WhatsApp -->
+  <div style="position:fixed;right:16px;bottom:16px">
+    <a class="grad" style="width:56px;height:56px;border-radius:9999px;display:flex;align-items:center;justify-content:center" href="https://wa.me/40723234792?text=Salut%20eppel%20construct%2C%20a%C8%99%20dori%20o%20ofert%C4%83%20de%20proiectare" target="_blank" rel="noopener" aria-label="WhatsApp">
+      <svg viewBox="0 0 32 32" fill="white" width="26" height="26" aria-hidden="true">
+        <path d="M19.11 17.17c-.27-.14-1.6-.79-1.84-.87-.25-.09-.43-.14-.6.14-.18.27-.69.86-.85 1.03-.16.18-.31.2-.58.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.41.12-.54.12-.12.27-.31.4-.47.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.47-.07-.14-.6-1.43-.82-1.96-.22-.53-.44-.46-.6-.46-.16 0-.34-.02-.52-.02-.18 0-.47.07-.72.34-.25.27-.95.93-.95 2.27s.98 2.63 1.12 2.81c.14.18 1.92 2.93 4.65 4.1..."></path>
+      </svg>
+    </a>
+  </div>
+
+  <!-- Theme toggle -->
+  <div class="theme-toggle">
+    <button id="themeBtn" class="theme-btn" aria-label="Toggle theme">
+      <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
+      <svg id="moonIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" style="display:none"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+    </button>
+    <span class="text-sm" style="color:var(--muted)">Theme</span>
+  </div>
+
+  <!-- Lightbox Element -->
+  <div id="lightbox" class="lightbox" aria-modal="true" role="dialog">
+    <div class="lightbox-content">
+      <img id="lbImg" src="" alt="" />
+      <div id="lbCaption" class="caption"></div>
+      <button class="lb-btn lb-prev" aria-label="Previous" id="lbPrev">‹</button>
+      <button class="lb-btn lb-next" aria-label="Next" id="lbNext">›</button>
+      <button class="lb-close" aria-label="Close" id="lbClose">✕</button>
     </div>
-  </footer>
+  </div>
 
 <script>
-const PAGES = [
-  { id: "home", label: "Home" },
-  { id: "services", label: "Services" },
-  { id: "projects", label: "Projects" },
-  { id: "process", label: "Process" },
-  { id: "about", label: "About" },
-  { id: "faq", label: "FAQ" },
-  { id: "contact", label: "Contact" },
-];
-
-function linkEl(p, isMobile=false) {
-  const a = document.createElement('a');
-  a.href = '#'+p.id;
-  a.className = (isMobile? 'px-3 py-2 rounded-2xl border text-center' : 'px-3 py-2 rounded-2xl border bg-white hover:bg-slate-50');
-  a.textContent = p.label;
-  return a;
+/* THEME */
+function applyTheme(t){
+  document.documentElement.setAttribute('data-theme', t);
+  localStorage.setItem('theme', t);
+  document.getElementById('sunIcon').style.display = t==='dark' ? 'none' : 'block';
+  document.getElementById('moonIcon').style.display = t==='dark' ? 'block' : 'none';
 }
-
-function renderNav() {
-  const nd = document.getElementById('nav-desktop');
-  const nm = document.getElementById('nav-mobile');
-  nd.innerHTML = ''; nm.innerHTML = '';
-  PAGES.forEach(p => { nd.appendChild(linkEl(p)); nm.appendChild(linkEl(p,true)); });
-}
-
-function toggleMenu(){ document.getElementById('nav-mobile').classList.toggle('hidden'); }
-
-function hero() {
-  return `
-  <div class="relative overflow-hidden">
-    <div class="absolute inset-0 opacity-20 grad"></div>
-    <div class="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24">
-      <span class="chip grad mb-4">Structural Engineering · Romania</span>
-      <h1 class="text-3xl md:text-5xl font-extrabold tracking-tight leading-tight">
-        Design for reinforced concrete & steel structures — precise drafting included
-      </h1>
-      <p class="mt-4 text-lg text-slate-600 max-w-3xl">
-        Safe, efficient, code‑compliant designs for residential and commercial buildings across Romania.
-        BIM‑ready deliverables and shop drawings crews can build from.
-      </p>
-      <div class="mt-6 flex flex-wrap gap-3">
-        <a href="#services" class="px-4 py-3 rounded-2xl text-white grad">See services</a>
-        <a href="#projects" class="px-4 py-3 rounded-2xl border">View projects</a>
-      </div>
-      <div class="mt-6 flex flex-wrap gap-2 text-sm text-slate-600">
-        <span>✅ Eurocode & P100 compliance</span>
-        <span>✅ BIM‑ready (Revit)</span>
-        <span>✅ Fast, clear shop drawings</span>
-      </div>
-    </div>
-  </div>`;
-}
-
-function img(url, alt="") {
-  return `<div class="relative w-full overflow-hidden rounded-2xl border"><img src="${url}" alt="${alt}" class="w-full h-56 object-cover"/></div>`;
-}
-
-function home() {
-  return `
-  ${hero()}
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-    <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Expertise</h2>
-    <div class="grid md:grid-cols-3 gap-6">
-      ${['Reinforced concrete buildings','Steel & composite structures','Seismic assessment & retrofitting']
-        .map(t=>`
-          <div class="card p-6">
-            <h3 class="font-semibold mb-1">${t}</h3>
-            <p class="text-slate-600">Analysis, modeling, and detailing tailored to site constraints and budget.</p>
-          </div>`).join('')}
-    </div>
-  </section>
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-    <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Recent work</h2>
-    <div class="grid md:grid-cols-3 gap-6">
-      ${img('https://images.unsplash.com/photo-1504307651254-35680f356dfd?q=80&w=1200&auto=format&fit=crop','Rebar on site')}
-      ${img('https://images.unsplash.com/photo-1498601761256-1efd98729b36?q=80&w=1200&auto=format&fit=crop','Steel frame')}
-      ${img('https://images.unsplash.com/photo-1541976076758-347942db1970?q=80&w=1200&auto=format&fit=crop','Formwork and concrete')}
-    </div>
-  </section>`;
-}
-
-function services() {
-  const items = [
-    ['Concept & feasibility','Preliminary sizing, scheme comparison, early risk identification for permits and cost plans.'],
-    ['Detailed design (RC & steel)','3D analysis/modeling, design calculations, and drawings per Eurocode/P100.'],
-    ['Shop drawings & rebar schedules','Clear, buildable details with bar marks, bend schedules, and quantities.'],
-    ['Seismic evaluation & retrofit','Assessment of existing buildings, strengthening concepts, and phasing.'],
-  ];
-  return `
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-    <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Structural services</h2>
-    <div class="grid md:grid-cols-2 gap-6">
-      ${items.map(([h,p])=>`<div class="card p-6"><h3 class="font-semibold mb-1">${h}</h3><p class="text-slate-600">${p}</p></div>`).join('')}
-    </div>
-    <div>
-      <h3 class="font-semibold mb-2">Deliverables</h3>
-      <ul class="list-disc pl-6 text-slate-600 space-y-1">
-        <li>Calculation notes and design reports</li>
-        <li>GA plans, sections, and details</li>
-        <li>Rebar and steel fabrication drawings</li>
-        <li>BIM exports (IFC) and coordination models</li>
-      </ul>
-    </div>
-  </section>`;
-}
-
-function projects() {
-  const ps = [
-    ['Residential RC frame, Cluj','https://images.unsplash.com/photo-1530610476181-d83430b64dcd?q=80&w=1200&auto=format&fit=crop','G+8 building with shear walls; optimized slab thickness and rebar quantities.'],
-    ['Industrial steel hall, Brașov','https://images.unsplash.com/photo-1581091870633-1e7eab070b8b?q=80&w=1200&auto=format&fit=crop','30×60 m portal frame with crane runway; efficient connection detailing.'],
-    ['Seismic retrofit, București','https://images.unsplash.com/photo-1494526585095-c41746248156?q=80&w=1200&auto=format&fit=crop','FRP and RC jacketing with staged construction.']
-  ];
-  return `
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-    <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Selected projects</h2>
-    <div class="grid md:grid-cols-3 gap-6">
-      ${ps.map(([t,imgUrl,d])=>`
-        <div class="card overflow-hidden">
-          ${img(imgUrl,t)}
-          <div class="p-6"><h3 class="font-semibold mb-1">${t}</h3><p class="text-slate-600">${d}</p></div>
-        </div>`).join('')}
-    </div>
-  </section>`;
-}
-
-function process() {
-  const steps = [
-    ['Brief & constraints','Requirements, codes, soils, and architectural constraints.'],
-    ['Model & iterate','3D analysis, options, and value engineering.'],
-    ['Detail & coordinate','Clash checks, buildability, and drawing production.'],
-    ['Support during construction','RFIs, site visits, and as‑built revisions.'],
-  ];
-  return `
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-    <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">How we work</h2>
-    <ol class="grid md:grid-cols-4 gap-6 list-decimal pl-6 text-slate-600">
-      ${steps.map(([h,p])=>`<li><p class="font-semibold text-slate-900">${h}</p>${p}</li>`).join('')}
-    </ol>
-  </section>`;
-}
-
-function about() {
-  return `
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-    <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">About eppel construct</h2>
-    <p class="text-slate-600 max-w-3xl">We’re a structural engineering studio focused on reliable, code‑compliant designs for buildings in Romania. We combine practical site experience with BIM workflows to deliver drawings that crews can actually build.</p>
-    <div class="flex flex-wrap gap-2 text-sm text-slate-600">
-      <span class="px-2 py-1 rounded-full border">Revit</span>
-      <span class="px-2 py-1 rounded-full border">ETABS</span>
-      <span class="px-2 py-1 rounded-full border">Robot</span>
-      <span class="px-2 py-1 rounded-full border">AutoCAD</span>
-      <span class="px-2 py-1 rounded-full border">Eurocode / P100</span>
-    </div>
-  </section>`;
-}
-
-function faq() {
-  const faqs = [
-    ['Do you work across Romania?','Yes—most projects are remote with periodic site visits.'],
-    ['Can you produce shop drawings?','Absolutely—rebar marks, bend schedules, and quantities are included.'],
-    ['Which codes do you follow?','Eurocodes and Romanian P100 for seismic, plus local norms as needed.']
-  ];
-  return `
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-    <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Frequently asked questions</h2>
-    <div class="space-y-4">
-      ${faqs.map(([q,a])=>`
-        <details class="card p-4">
-          <summary class="font-semibold cursor-pointer">${q}</summary>
-          <p class="text-slate-600 mt-2">${a}</p>
-        </details>`).join('')}
-    </div>
-  </section>`;
-}
-
-function contact() {
-  return `
-  <section class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
-    <h2 class="text-2xl md:text-3xl font-semibold tracking-tight">Contact</h2>
-    <form class="card p-6 space-y-4 max-w-2xl" onsubmit="event.preventDefault(); alert('Demo form — connect a service like Formspree to activate.');">
-      <div class="grid md:grid-cols-2 gap-4">
-        <input class="border rounded-xl px-3 py-2" placeholder="Full name">
-        <input class="border rounded-xl px-3 py-2" type="email" placeholder="Email address">
-        <input class="border rounded-xl px-3 py-2" placeholder="Phone (optional)">
-        <input class="border rounded-xl px-3 py-2" placeholder="City">
-        <textarea class="border rounded-xl px-3 py-2 md:col-span-2" rows="5" placeholder="Tell us about your project (height, system, timelines)"></textarea>
-      </div>
-      <button class="px-4 py-3 rounded-2xl text-white grad w-full md:w-auto">Send message</button>
-      <p class="text-xs text-slate-600">Demo form—connect to your backend or a service like Formspree to make it live.</p>
-    </form>
-  </section>`;
-}
-
-function render(route) {
-  const app = document.getElementById('app');
-  const page = (route || 'home').replace('#','');
-  const content = {
-    home, services, projects, process, about, faq, contact
-  }[page];
-  app.innerHTML = content ? content() : home();
-}
-
-window.addEventListener('hashchange', ()=>render(location.hash));
-window.addEventListener('DOMContentLoaded', ()=>{
-  document.getElementById('yr').textContent = new Date().getFullYear();
-  renderNav(); render(location.hash);
+document.addEventListener('DOMContentLoaded', ()=>{
+  const saved = localStorage.getItem('theme');
+  applyTheme(saved || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+  document.getElementById('themeBtn').addEventListener('click', ()=>{
+    const next = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    applyTheme(next);
+  });
 });
+
+/* FORMSPREE REDIRECT */
+function submitSpree(e){
+  e.preventDefault();
+  const form = e.target;
+  fetch(form.action, { method:'POST', body:new FormData(form), headers:{'Accept':'application/json'} })
+    .then(r => r.ok ? (window.location.href='thankyou.html') : alert('Error sending message.'))
+    .catch(() => alert('Network error.'));
+}
+
+/* TOAST on ?sent=1 */
+document.addEventListener('DOMContentLoaded', () => {
+  const params = new URLSearchParams(location.search);
+  if (params.get('sent') === '1') {
+    const el = document.getElementById('successToast');
+    el.classList.add('show');
+    setTimeout(()=> el.classList.remove('show'), 5000);
+    el.addEventListener('click', ()=> el.classList.remove('show'));
+  }
+});
+
+/* GALLERY — fetch albums from Netlify Function */
+let CURRENT_IMAGES = [];
+let CURRENT_INDEX = 0;
+
+async function loadAlbums(){
+  try {
+    const res = await fetch('/.netlify/functions/albums-index');
+    const data = await res.json();
+    const albums = data.albums || [];
+    renderAlbums(albums);
+  } catch(e){ console.error(e); }
+}
+
+function renderAlbums(albums){
+  const filters = document.getElementById('albumFilters');
+  filters.innerHTML = '';
+  const allBtn = document.createElement('button');
+  allBtn.className = 'album-btn active'; allBtn.textContent = 'All';
+  allBtn.addEventListener('click', ()=>{
+    setActiveBtn(allBtn);
+    const allImages = albums.flatMap(a => a.images.map(img => ({...img, _album:a.title})));
+    renderGallery(allImages);
+  });
+  filters.appendChild(allBtn);
+
+  albums.forEach((a)=>{
+    const b = document.createElement('button');
+    b.className = 'album-btn'; b.textContent = a.title;
+    b.addEventListener('click', ()=>{
+      setActiveBtn(b);
+      const imgs = a.images.map(img => ({...img, _album:a.title}));
+      renderGallery(imgs);
+    });
+    filters.appendChild(b);
+  });
+
+  // initial: all
+  const allImages = albums.flatMap(a => a.images.map(img => ({...img, _album:a.title})));
+  renderGallery(allImages);
+}
+
+function setActiveBtn(btn){
+  document.querySelectorAll('.album-btn').forEach(x=>x.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderGallery(images){
+  CURRENT_IMAGES = images;
+  const g = document.getElementById('gallery');
+  g.innerHTML = images.map((img, i) => `
+    <figure class="masonry-item card overflow-hidden" data-idx="${i}">
+      <img src="${img.src}" alt="${img.caption||''}" />
+      ${img.caption ? `<figcaption class="p-3 text-sm" style="color:var(--muted)">${img.caption}</figcaption>` : ''}
+    </figure>
+  `).join('');
+  g.querySelectorAll('.masonry-item img').forEach((el)=>{
+    el.addEventListener('click', (ev)=>{
+      const idx = Number(ev.target.closest('.masonry-item').dataset.idx);
+      openLightbox(idx);
+    });
+  });
+}
+
+/* Lightbox */
+const lb = document.getElementById('lightbox');
+const lbImg = document.getElementById('lbImg');
+const lbCaption = document.getElementById('lbCaption');
+const lbPrev = document.getElementById('lbPrev');
+const lbNext = document.getElementById('lbNext');
+const lbClose = document.getElementById('lbClose');
+
+function openLightbox(i){
+  CURRENT_INDEX = i;
+  const item = CURRENT_IMAGES[CURRENT_INDEX];
+  lbImg.src = item.src;
+  lbImg.alt = item.caption || '';
+  lbCaption.textContent = item.caption || '';
+  lb.classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLightbox(){
+  lb.classList.remove('open');
+  document.body.style.overflow = '';
+}
+function nextImg(){
+  CURRENT_INDEX = (CURRENT_INDEX + 1) % CURRENT_IMAGES.length;
+  openLightbox(CURRENT_INDEX);
+}
+function prevImg(){
+  CURRENT_INDEX = (CURRENT_INDEX - 1 + CURRENT_IMAGES.length) % CURRENT_IMAGES.length;
+  openLightbox(CURRENT_INDEX);
+}
+lbNext.addEventListener('click', nextImg);
+lbPrev.addEventListener('click', prevImg);
+lbClose.addEventListener('click', closeLightbox);
+lb.addEventListener('click', (e)=>{ if(e.target === lb) closeLightbox(); });
+document.addEventListener('keydown', (e)=>{
+  if (!lb.classList.contains('open')) return;
+  if (e.key === 'Escape') closeLightbox();
+  if (e.key === 'ArrowRight') nextImg();
+  if (e.key === 'ArrowLeft') prevImg();
+});
+
+document.addEventListener('DOMContentLoaded', loadAlbums);
 </script>
 </body>
 </html>

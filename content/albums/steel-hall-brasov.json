@@ -1,0 +1,14 @@
+{
+  "title": "Steel Hall — Brașov",
+  "cover": "/media/sample-hall.jpg",
+  "images": [
+    {
+      "src": "/media/sample-hall.jpg",
+      "caption": "Portal frame erection"
+    },
+    {
+      "src": "/media/sample-conn.jpg",
+      "caption": "Moment connection detail"
+    }
+  ]
+}

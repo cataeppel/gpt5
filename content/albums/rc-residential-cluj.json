@@ -1,0 +1,14 @@
+{
+  "title": "RC Residential — Cluj",
+  "cover": "/media/sample-rc.jpg",
+  "images": [
+    {
+      "src": "/media/sample-rebar.jpg",
+      "caption": "Slab reinforcement"
+    },
+    {
+      "src": "/media/sample-form.jpg",
+      "caption": "Formwork & pour"
+    }
+  ]
+}
