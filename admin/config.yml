@@ -22,7 +22,6 @@ collections:
       - label: "Images"
         name: "images"
         widget: "list"
-        summary: "{{fields.caption}}"
         fields:
           - {label: "Image", name: "src", widget: "image"}
           - {label: "Caption", name: "caption", widget: "string", required: false}

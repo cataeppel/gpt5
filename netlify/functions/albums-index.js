@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-exports.handler = async function(event, context) {
+exports.handler = async function() {
   try {
     const dir = path.join(__dirname, '../../content/albums');
     const names = fs.readdirSync(dir).filter(n => n.endsWith('.json'));

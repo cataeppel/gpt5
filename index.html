@@ -19,13 +19,11 @@
     .theme-btn{width:56px;height:56px;border-radius:9999px;border:1px solid var(--border);background:var(--card);display:flex;align-items:center;justify-content:center}
     .album-btn{padding:.4rem .7rem;border:1px solid var(--border);border-radius:.75rem;cursor:pointer}
     .album-btn.active{background:rgba(124,58,237,.12);border-color:rgba(124,58,237,.35)}
-    /* Masonry */
     #gallery { column-gap: 1rem; }
     @media (min-width: 640px){ #gallery { column-count: 2; } }
     @media (min-width: 768px){ #gallery { column-count: 3; } }
     .masonry-item { break-inside: avoid; margin: 0 0 1rem; display: inline-block; width: 100%; }
     .masonry-item img { width: 100%; height: auto; display:block; }
-    /* Lightbox */
     .lightbox { position: fixed; inset: 0; z-index: 1000; background: rgba(0,0,0,.85); display: none; align-items: center; justify-content: center; }
     .lightbox.open { display: flex; }
     .lightbox-content { position: relative; max-width: 92vw; max-height: 86vh; }
@@ -61,7 +59,6 @@
       <p class="text-slate-600 max-w-3xl">BIM‑ready deliverables and shop drawings crews can build from.</p>
     </section>
 
-    <!-- GALLERY / RECENT WORK -->
     <section id="projects" class="space-y-4">
       <h2 class="text-2xl md:text-3xl font-semibold">Recent work</h2>
       <div id="albumFilters" class="flex flex-wrap gap-2"></div>
@@ -82,16 +79,12 @@
     </section>
   </main>
 
-  <!-- WhatsApp -->
   <div style="position:fixed;right:16px;bottom:16px">
     <a class="grad" style="width:56px;height:56px;border-radius:9999px;display:flex;align-items:center;justify-content:center" href="https://wa.me/40723234792?text=Salut%20eppel%20construct%2C%20a%C8%99%20dori%20o%20ofert%C4%83%20de%20proiectare" target="_blank" rel="noopener" aria-label="WhatsApp">
-      <svg viewBox="0 0 32 32" fill="white" width="26" height="26" aria-hidden="true">
-        <path d="M19.11 17.17c-.27-.14-1.6-.79-1.84-.87-.25-.09-.43-.14-.6.14-.18.27-.69.86-.85 1.03-.16.18-.31.2-.58.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.41.12-.54.12-.12.27-.31.4-.47.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.47-.07-.14-.6-1.43-.82-1.96-.22-.53-.44-.46-.6-.46-.16 0-.34-.02-.52-.02-.18 0-.47.07-.72.34-.25.27-.95.93-.95 2.27s.98 2.63 1.12 2.81c.14.18 1.92 2.93 4.65 4.1..."></path>
-      </svg>
+      <svg viewBox="0 0 32 32" fill="white" width="26" height="26" aria-hidden="true"><path d="M19.11 17.17c-.27-.14-1.6-.79-1.84-.87-.25-.09-.43-.14-.6.14-.18.27-.69.86-.85 1.03-.16.18-.31.2-.58.07-.27-.14-1.14-.42-2.17-1.34-.8-.71-1.34-1.58-1.5-1.85-.16-.27-.02-.41.12-.54.12-.12.27-.31.4-.47.14-.16.18-.27.27-.45.09-.18.05-.34-.02-.47-.07-.14-.6-1.43-.82-1.96-.22-.53-.44-.46-.6-.46-.16 0-.34-.02-.52-.02-.18 0-.47.07-.72.34-.25.27-.95.93-.95 2.27s.98 2.63 1.12 2.81c.14.18 1.92 2.93 4.65 4.1..."/></svg>
     </a>
   </div>
 
-  <!-- Theme toggle -->
   <div class="theme-toggle">
     <button id="themeBtn" class="theme-btn" aria-label="Toggle theme">
       <svg id="sunIcon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4 12H2M22 12h-2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/></svg>
@@ -100,7 +93,6 @@
     <span class="text-sm" style="color:var(--muted)">Theme</span>
   </div>
 
-  <!-- Lightbox Element -->
   <div id="lightbox" class="lightbox" aria-modal="true" role="dialog">
     <div class="lightbox-content">
       <img id="lbImg" src="" alt="" />
@@ -112,7 +104,6 @@
   </div>
 
 <script>
-/* THEME */
 function applyTheme(t){
   document.documentElement.setAttribute('data-theme', t);
   localStorage.setItem('theme', t);
@@ -128,7 +119,6 @@ document.addEventListener('DOMContentLoaded', ()=>{
   });
 });
 
-/* FORMSPREE REDIRECT */
 function submitSpree(e){
   e.preventDefault();
   const form = e.target;
@@ -137,7 +127,6 @@ function submitSpree(e){
     .catch(() => alert('Network error.'));
 }
 
-/* TOAST on ?sent=1 */
 document.addEventListener('DOMContentLoaded', () => {
   const params = new URLSearchParams(location.search);
   if (params.get('sent') === '1') {
@@ -148,7 +137,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
-/* GALLERY — fetch albums from Netlify Function */
 let CURRENT_IMAGES = [];
 let CURRENT_INDEX = 0;
 
@@ -184,7 +172,6 @@ function renderAlbums(albums){
     filters.appendChild(b);
   });
 
-  // initial: all
   const allImages = albums.flatMap(a => a.images.map(img => ({...img, _album:a.title})));
   renderGallery(allImages);
 }
@@ -211,7 +198,6 @@ function renderGallery(images){
   });
 }
 
-/* Lightbox */
 const lb = document.getElementById('lightbox');
 const lbImg = document.getElementById('lbImg');
 const lbCaption = document.getElementById('lbCaption');
