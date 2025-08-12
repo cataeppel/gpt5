@@ -1,24 +1,24 @@
 {
-  "title": "RC Residential — Cluj",
-  "slug": "rc-residential-cluj",
-  "location": "Cluj-Napoca, RO",
-  "date": "2023-10-01T00:00:00.000Z",
-  "tags": [
-    "rc",
-    "residential"
-  ],
-  "area": 5400,
   "steel": 0,
+  "slug": "rc-residential-cluj",
+  "area": 5400,
+  "date": "2023-10-01T00:00:00.000Z",
   "duration": 8,
+  "location": "Cluj-Napoca, RO",
   "cover": "/media/sample-rc.jpg",
+  "title": "RC Residential — Cluj",
   "images": [
     {
-      "src": "/media/sample-rebar.jpg",
+      "src": "/media/3_12-photo.jpg",
       "caption": "Slab reinforcement"
     },
     {
-      "src": "/media/sample-form.jpg",
+      "src": "/media/8k.jpg",
       "caption": "Formwork & pour"
     }
+  ],
+  "tags": [
+    "rc",
+    "residential"
   ]
 }
