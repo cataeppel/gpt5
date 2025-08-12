@@ -1,15 +1,26 @@
 const fs = require('fs');
 const path = require('path');
 
+function albumsDir() {
+  const candidates = [
+    path.resolve('content/albums'),
+    path.join(__dirname, '../../content/albums'),
+  ];
+  for (const p of candidates) {
+    if (fs.existsSync(p)) return p;
+  }
+  throw new Error('albums directory not found');
+}
+
 exports.handler = async function() {
   try {
-    const dir = path.join(__dirname, '../../content/albums');
+    const dir = albumsDir();
     const names = fs.readdirSync(dir).filter(n => n.endsWith('.json'));
     const albums = names.map(name => {
-      const p = path.join(dir, name);
-      const raw = fs.readFileSync(p, 'utf8');
+      const raw = fs.readFileSync(path.join(dir, name), 'utf8');
       const data = JSON.parse(raw);
-      return { slug: name.replace(/\.json$/, ''), ...data };
+      const slug = data.slug || name.replace(/\.json$/, '');
+      return { slug, ...data };
     });
     return {
       statusCode: 200,

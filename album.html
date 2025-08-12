@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Project — eppel construct</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-900 text-slate-100">
+  <main class="max-w-5xl mx-auto p-6">
+    <a href="index.html#projects" class="text-blue-400">&larr; Back</a>
+    <h1 id="title" class="text-3xl font-extrabold mt-2"></h1>
+    <p id="meta" class="text-slate-400 mt-1"></p>
+    <div id="metrics" class="flex gap-4 mt-4 text-sm text-slate-300"></div>
+    <div id="grid" class="mt-6 columns-1 sm:columns-2 md:columns-3 gap-4"></div>
+  </main>
+
+<script>
+const params = new URLSearchParams(location.search);
+const slug = params.get('a');
+if(!slug){ document.getElementById('title').textContent = 'Album not specified'; }
+
+(async () => {
+  try {
+    const res = await fetch(`/content/albums/${slug}.json`);
+    if(!res.ok) throw new Error('Album not found');
+    const album = await res.json();
+
+    document.getElementById('title').textContent = album.title || slug;
+    const meta = [];
+    if (album.location) meta.push(album.location);
+    if (album.date) meta.push(new Date(album.date).toLocaleDateString());
+    if (album.tags && album.tags.length) meta.push('#' + album.tags.join(' #'));
+    document.getElementById('meta').textContent = meta.join(' • ');
+
+    const metrics = [];
+    if (album.area) metrics.push(`Area: ${album.area} m²`);
+    if (album.steel) metrics.push(`Steel: ${album.steel} t`);
+    if (album.duration) metrics.push(`Duration: ${album.duration} months`);
+    document.getElementById('metrics').textContent = metrics.join('  ·  ');
+
+    const grid = document.getElementById('grid');
+    grid.innerHTML = (album.images||[]).map(img => `
+      <figure class="mb-4 break-inside-avoid">
+        <img src="/.netlify/images?url=${encodeURIComponent(img.src)}&w=1400&fit=cover&auto=compress" alt="${img.caption||''}" class="rounded-lg">
+        ${img.caption ? `<figcaption class="text-slate-400 text-sm mt-2">${img.caption}</figcaption>` : ''}
+      </figure>
+    `).join('');
+  } catch(e){
+    document.getElementById('title').textContent = 'Album not found';
+  }
+})();
+</script>
+</body>
+</html>

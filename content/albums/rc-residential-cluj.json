@@ -1,14 +1,24 @@
 {
-  "title": "SMUC Caransebes",
-  "cover": "/media/3_12-photo.jpg",
+  "title": "RC Residential — Cluj",
+  "slug": "rc-residential-cluj",
+  "location": "Cluj-Napoca, RO",
+  "date": "2023-10-01T00:00:00.000Z",
+  "tags": [
+    "rc",
+    "residential"
+  ],
+  "area": 5400,
+  "steel": 0,
+  "duration": 8,
+  "cover": "/media/sample-rc.jpg",
   "images": [
     {
-      "src": "/media/8k.jpg",
-      "caption": "Spital SMUC"
+      "src": "/media/sample-rebar.jpg",
+      "caption": "Slab reinforcement"
     },
     {
-      "src": "/media/1_26-photo.jpg",
-      "caption": "Fatada"
+      "src": "/media/sample-form.jpg",
+      "caption": "Formwork & pour"
     }
   ]
 }

@@ -18,6 +18,13 @@ collections:
     slug: "{{slug}}"
     fields:
       - {label: "Title", name: "title", widget: "string"}
+      - {label: "Slug (URL id)", name: "slug", widget: "string", hint: "lowercase-dashes, e.g. steel-hall-brasov"}
+      - {label: "Location", name: "location", widget: "string", required: false}
+      - {label: "Date", name: "date", widget: "datetime", required: false}
+      - {label: "Tags", name: "tags", widget: "list", required: false, hint: "e.g. steel, rc, warehouse"}
+      - {label: "Built Area (m²)", name: "area", widget: "number", required: false}
+      - {label: "Steel Tonnage (t)", name: "steel", widget: "number", required: false}
+      - {label: "Duration (months)", name: "duration", widget: "number", required: false}
       - {label: "Cover Image", name: "cover", widget: "image"}
       - label: "Images"
         name: "images"

@@ -60,11 +60,12 @@
       <p class="text-slate-300 max-w-3xl">BIM‑ready deliverables and shop drawings crews can build from.</p>
     </section>
 
-    <section id="projects" class="space-y-4">
+    <section id="projects" class="space-y-3">
       <h2 class="text-2xl md:text-3xl font-semibold">Recent work</h2>
       <div id="albumFilters" class="flex flex-wrap gap-2"></div>
+      <div id="albumLinks" class="text-sm text-slate-400"></div>
       <div id="gallery"></div>
-      <p class="text-sm text-slate-400">Manage albums and images at <a class="link" href="/admin">/admin</a> (Netlify Identity).</p>
+      <p class="text-sm text-slate-400">Manage albums and images at <a class="link" href="/admin">/admin</a>.</p>
     </section>
 
     <section id="contact" class="space-y-3">
@@ -104,16 +105,11 @@
     </div>
   </div>
 
-  <!-- Netlify Identity widget (makes invite/login work on the homepage) -->
   <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
   <script>
     if (window.netlifyIdentity) {
       window.netlifyIdentity.on('init', (user) => {
-        if (!user) {
-          window.netlifyIdentity.on('login', () => {
-            document.location.href = '/admin/';
-          });
-        }
+        if (!user) window.netlifyIdentity.on('login', () => { document.location.href = '/admin/'; });
       });
     }
   </script>
@@ -166,34 +162,41 @@ async function loadAlbums(){
 
 function renderAlbums(albums){
   const filters = document.getElementById('albumFilters');
-  filters.innerHTML = '';
-  const allBtn = document.createElement('button');
-  allBtn.className = 'album-btn active'; allBtn.textContent = 'All';
-  allBtn.addEventListener('click', ()=>{
-    setActiveBtn(allBtn);
+  filters.innerHTML='';
+
+  const tagSet = new Set();
+  albums.forEach(a => (a.tags||[]).forEach(t => tagSet.add(String(t).toLowerCase())));
+
+  function addPill(label, onClick, active=false){
+    const b = document.createElement('button');
+    b.className = 'album-btn' + (active ? ' active' : '');
+    b.textContent = label;
+    b.onclick = () => { document.querySelectorAll('.album-btn').forEach(x=>x.classList.remove('active')); b.classList.add('active'); onClick(); };
+    filters.appendChild(b);
+  }
+
+  addPill('All', () => {
     const allImages = albums.flatMap(a => a.images.map(img => ({...img, _album:a.title})));
     renderGallery(allImages);
-  });
-  filters.appendChild(allBtn);
+  }, true);
 
-  albums.forEach((a)=>{
-    const b = document.createElement('button');
-    b.className = 'album-btn'; b.textContent = a.title;
-    b.addEventListener('click', ()=>{
-      setActiveBtn(b);
-      const imgs = a.images.map(img => ({...img, _album:a.title}));
+  [...tagSet].sort().forEach(tag => {
+    addPill('#'+tag, () => {
+      const imgs = albums
+        .filter(a => (a.tags||[]).map(t=>String(t).toLowerCase()).includes(tag))
+        .flatMap(a => a.images.map(img => ({...img, _album:a.title})));
       renderGallery(imgs);
     });
-    filters.appendChild(b);
   });
+
+  const links = document.getElementById('albumLinks');
+  links.innerHTML = albums.map(a => {
+    const slug = a.slug || a.title.toLowerCase().replace(/\s+/g,'-');
+    return `<a class="underline mr-3" href="album.html?a=${encodeURIComponent(slug)}">${a.title}</a>`;
+  }).join('');
 
   const allImages = albums.flatMap(a => a.images.map(img => ({...img, _album:a.title})));
   renderGallery(allImages);
-}
-
-function setActiveBtn(btn){
-  document.querySelectorAll('.album-btn').forEach(x=>x.classList.remove('active'));
-  btn.classList.add('active');
 }
 
 function renderGallery(images){
@@ -201,7 +204,7 @@ function renderGallery(images){
   const g = document.getElementById('gallery');
   g.innerHTML = images.map((img, i) => `
     <figure class="masonry-item card overflow-hidden" data-idx="${i}">
-      <img src="${img.src}" alt="${img.caption||''}" />
+      <img src="/.netlify/images?url=${encodeURIComponent(img.src)}&w=1200&fit=cover&auto=compress" alt="${img.caption||''}" loading="lazy" />
       ${img.caption ? `<figcaption class="p-3 text-sm" style="color:var(--muted)">${img.caption}</figcaption>` : ''}
     </figure>
   `).join('');
@@ -223,16 +226,13 @@ const lbClose = document.getElementById('lbClose');
 function openLightbox(i){
   CURRENT_INDEX = i;
   const item = CURRENT_IMAGES[CURRENT_INDEX];
-  lbImg.src = item.src;
+  lbImg.src = `/.netlify/images?url=${encodeURIComponent(item.src)}&w=1800&fit=inside&auto=compress`;
   lbImg.alt = item.caption || '';
   lbCaption.textContent = item.caption || '';
   lb.classList.add('open');
   document.body.style.overflow = 'hidden';
 }
-function closeLightbox(){
-  lb.classList.remove('open');
-  document.body.style.overflow = '';
-}
+function closeLightbox(){ lb.classList.remove('open'); document.body.style.overflow = ''; }
 function nextImg(){ CURRENT_INDEX = (CURRENT_INDEX + 1) % CURRENT_IMAGES.length; openLightbox(CURRENT_INDEX); }
 function prevImg(){ CURRENT_INDEX = (CURRENT_INDEX - 1 + CURRENT_IMAGES.length) % CURRENT_IMAGES.length; openLightbox(CURRENT_INDEX); }
 lbNext.addEventListener('click', nextImg);
