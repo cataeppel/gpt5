@@ -1,12 +1,12 @@
 {
   "steel": 0,
-  "slug": "rc-residential-cluj",
-  "area": 5400,
-  "date": "2023-10-01T00:00:00.000Z",
-  "duration": 8,
-  "location": "Cluj-Napoca, RO",
+  "slug": "SMUC ",
+  "area": 20000,
+  "date": "2025-08-12T03:10:00.000+03:00",
+  "duration": 24,
+  "location": "Caransebes, RO",
   "cover": "/media/sample-rc.jpg",
-  "title": "RC Residential — Cluj",
+  "title": "SMUC Caransebes",
   "images": [
     {
       "src": "/media/3_12-photo.jpg",
